@@ -404,11 +404,13 @@ class Connection(object):
                 # process of determining the server's version, and immediately
                 # connect.
                 self._handshake(next_state=STATE_PLAYING)
-                login_start_packet = serverbound.login.LoginStartPacket()
+                login_start_packet = serverbound.login.LoginStartPacket()            
                 if self.auth_token:
                     login_start_packet.name = self.auth_token.profile.name
+                    login_start_packet.has_player_uuid = False
                 else:
                     login_start_packet.name = self.username
+                    login_start_packet.has_player_uuid = False
                 self.write_packet(login_start_packet)
                 self.reactor = LoginReactor(self)
             else:
@@ -485,7 +487,7 @@ class Connection(object):
         handshake.server_address = self.options.address
         handshake.server_port = self.options.port
         handshake.next_state = next_state
-
+        print(vars(handshake))
         self.write_packet(handshake)
 
     def _handle_exception(self, exc, exc_info):
@@ -627,7 +629,9 @@ class NetworkingThread(threading.Thread):
                 if not packet:
                     break
                 num_packets += 1
+                print("thread react", vars(packet))
                 self.connection._react(packet)
+                print("X)X)X)X)X)X)_X)")
                 read_timeout = 0
 
                 # Ignore the earlier exception if a disconnect packet is
@@ -722,8 +726,8 @@ class LoginReactor(PacketReactor):
     get_clientbound_packets = staticmethod(clientbound.login.get_packets)
 
     def react(self, packet):
+        print(vars(packet))
         if packet.packet_name == "encryption request":
-
             secret = encryption.generate_shared_secret()
             token, encrypted_secret = encryption.encrypt_token_and_secret(
                 packet.public_key, packet.verify_token, secret)

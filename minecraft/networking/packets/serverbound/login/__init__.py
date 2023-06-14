@@ -27,7 +27,7 @@ class LoginStartPacket(Packet):
 
     packet_name = "login start"
     definition = [
-        {'name': String}]
+        {'name': String, 'has_player_uuid': Boolean}]
 
 
 class EncryptionResponsePacket(Packet):

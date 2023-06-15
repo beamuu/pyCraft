@@ -218,6 +218,7 @@ class Long(Type):
 class UnsignedLong(Type):
     @staticmethod
     def read(file_object):
+        print("-   UnsignedLong:", file_object.bytes.read())
         return struct.unpack('>Q', file_object.read(8))[0]
 
     @staticmethod
@@ -286,7 +287,9 @@ class String(Type):
     @staticmethod
     def read(file_object):
         length = VarInt.read(file_object)
-        return file_object.read(length).decode("utf-8")
+        b = file_object.read(length)
+        print("bytes", b)
+        return b.decode("utf-8")
 
     @staticmethod
     def send(value, socket):
@@ -311,10 +314,14 @@ class Position(Type, Vector):
 
     @staticmethod
     def read_with_context(file_object, context):
+        print(file_object.bytes)
         location = UnsignedLong.read(file_object)
         x = int(location >> 38)                # 26 most significant bits
 
-        if context.protocol_later_eq(443):
+        if context.protocol_later_eq(763):
+            z = int(location << 26 >> 38)
+            y = int(location << 52 >> 52)
+        elif context.protocol_later_eq(443):
             z = int((location >> 12) & 0x3FFFFFF)  # 26 intermediate bits
             y = int(location & 0xFFF)              # 12 least signficant bits
         else:

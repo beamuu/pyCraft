@@ -29,7 +29,7 @@ class DisconnectPacket(Packet):
 
     packet_name = "disconnect"
     definition = [
-        {'json_data': String}]
+        {'reason': String}]
 
 
 class EncryptionRequestPacket(Packet):
@@ -38,7 +38,6 @@ class EncryptionRequestPacket(Packet):
         return 0x01 if context.protocol_later_eq(391) else \
                0x02 if context.protocol_later_eq(385) else \
                0x01
-
     packet_name = "encryption request"
     definition = [
         {'server_id': String},

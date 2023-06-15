@@ -173,7 +173,8 @@ class JoinGamePacket(AbstractDimensionPacket):
 class RespawnPacket(AbstractDimensionPacket):
     @staticmethod
     def get_id(context):
-        return 0x3D if context.protocol_later_eq(755) else \
+        return 0x41 if context.protocol_later_eq(763) else \
+               0x3D if context.protocol_later_eq(755) else \
                0x39 if context.protocol_later_eq(741) else \
                0x3A if context.protocol_later_eq(721) else \
                0x3B if context.protocol_later_eq(550) else \
@@ -191,11 +192,12 @@ class RespawnPacket(AbstractDimensionPacket):
 
     packet_name = 'respawn'
     get_definition = staticmethod(lambda context: [
-        {'dimension':
-         NBT if context.protocol_later_eq(748) else
-         String if context.protocol_later_eq(718) else
-         Integer},
-        {'world_name': String} if context.protocol_later_eq(719) else {},
+        # {'dimension':
+        #  NBT if context.protocol_later_eq(748) else
+        #  String if context.protocol_later_eq(718) else
+        #  Integer},
+        {'dimension_type': String},
+        {'dimension_name': String} if context.protocol_later_eq(719) else {},
         {'difficulty': UnsignedByte} if context.protocol_earlier(464) else {},
         {'hashed_seed': Long} if context.protocol_later_eq(552) else {},
         {'game_mode': UnsignedByte},

@@ -8,7 +8,8 @@ from minecraft.networking.packets import Packet
 class ExplosionPacket(Packet):
     @staticmethod
     def get_id(context):
-        return 0x1C if context.protocol_later_eq(755) else \
+        return 0x1D if context.protocol_later_eq(763) else \
+               0x1C if context.protocol_later_eq(755) else \
                0x1B if context.protocol_later_eq(741) else \
                0x1C if context.protocol_later_eq(721) else \
                0x1D if context.protocol_later_eq(550) else \

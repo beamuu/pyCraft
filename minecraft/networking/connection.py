@@ -566,6 +566,7 @@ class Connection(object):
         try:
             for listener in self.early_packet_listeners:
                 listener.call_packet(packet)
+            print("Connection._react", packet.packet_name, vars(packet))
             self.reactor.react(packet)
             for listener in self.packet_listeners:
                 listener.call_packet(packet)
@@ -624,14 +625,18 @@ class NetworkingThread(threading.Thread):
 
             # Read and react to as many as 50 packets.
             while num_packets < 50 and not self.interrupt:
-                packet = self.connection.reactor.read_packet(
-                    self.connection.file_object, timeout=read_timeout)
+                try:
+                    packet = self.connection.reactor.read_packet(
+                    self.connection.file_object, timeout=read_timeout)     
+                except:
+                    print("Ignore error when reading package")   
                 if not packet:
                     break
+                print("NetworkingThread:", packet.packet_name)
+                # print("NetworkingThreadDebug:"(i, packet.field_string(i)) for i in packet.fields)
                 num_packets += 1
-                print("thread react", vars(packet))
                 self.connection._react(packet)
-                print("X)X)X)X)X)X)_X)")
+
                 read_timeout = 0
 
                 # Ignore the earlier exception if a disconnect packet is
@@ -668,9 +673,9 @@ class PacketReactor(object):
 
         if ready_to_read:
             length = VarInt.read(stream)
-
             packet_data = packets.PacketBuffer()
             packet_data.send(stream.read(length))
+            # print("packet_data !!!!!", packet_data.get_writable())
             # Ensure we read all the packet
             while len(packet_data.get_writable()) < length:
                 packet_data.send(
@@ -726,7 +731,7 @@ class LoginReactor(PacketReactor):
     get_clientbound_packets = staticmethod(clientbound.login.get_packets)
 
     def react(self, packet):
-        print(vars(packet))
+        print("LoginReactor:", packet.packet_name, vars(packet))
         if packet.packet_name == "encryption request":
             secret = encryption.generate_shared_secret()
             token, encrypted_secret = encryption.encrypt_token_and_secret(
@@ -743,8 +748,9 @@ class LoginReactor(PacketReactor):
             encryption_response.shared_secret = encrypted_secret
             encryption_response.verify_token = token
 
-            # Forced because we'll have encrypted the connection by the time
+            # Forced because we'll have encrypted the connection by the time  
             # it reaches the outgoing queue
+            print("encryption_response:", vars(encryption_response))
             self.connection.write_packet(encryption_response, force=True)
 
             # Enable the encryption
@@ -760,6 +766,9 @@ class LoginReactor(PacketReactor):
         elif packet.packet_name == "disconnect":
             # Receiving a disconnect packet in the login state indicates an
             # abnormal condition. Raise an exception explaining the situation.
+            if self.lock:
+                print("locked!!!!!")
+                return
             try:
                 msg = json.loads(packet.json_data)['text']
             except (ValueError, TypeError, KeyError):

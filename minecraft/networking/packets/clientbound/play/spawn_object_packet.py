@@ -10,7 +10,8 @@ from minecraft.networking.types import (
 class SpawnObjectPacket(Packet):
     @staticmethod
     def get_id(context):
-        return 0x00 if context.protocol_later_eq(67) else \
+        return 0x01 if context.protocol_later_eq(763) else \
+               0x00 if context.protocol_later_eq(67) else \
                0x0E
 
     packet_name = 'spawn object'

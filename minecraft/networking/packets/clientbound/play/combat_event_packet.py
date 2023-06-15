@@ -146,14 +146,14 @@ class SpecialisedCombatEventPacket(CombatEventPacket):
 @CombatEventPacket.EnterCombatEvent.register  # virtual subclass
 class EnterCombatEventPacket(SpecialisedCombatEventPacket):
     packet_name = 'enter combat event'
-    id = 0x34
+    id = 0x37
     definition = []
 
 
 @CombatEventPacket.EndCombatEvent.register  # virtual subclass
 class EndCombatEventPacket(SpecialisedCombatEventPacket):
     packet_name = 'end combat event'
-    id = 0x33
+    id = 0x36
     definition = [
         {'duration': VarInt},
         {'entity_id': Integer}]
@@ -162,7 +162,7 @@ class EndCombatEventPacket(SpecialisedCombatEventPacket):
 @CombatEventPacket.EntityDeadEvent.register  # virtual subclass
 class DeathCombatEventPacket(SpecialisedCombatEventPacket):
     packet_name = 'death combat event'
-    id = 0x35
+    id = 0x38
     definition = [
         {'player_id': VarInt},
         {'entity_id': Integer},

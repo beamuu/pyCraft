@@ -145,7 +145,8 @@ class ChatMessagePacket(Packet):
 class DisconnectPacket(Packet):
     @staticmethod
     def get_id(context):
-        return 0x1A if context.protocol_later_eq(755) else \
+        return 0x1A if context.protocol_later_eq(763) else \
+               0x1A if context.protocol_later_eq(755) else \
                0x19 if context.protocol_later_eq(741) else \
                0x1A if context.protocol_later_eq(721) else \
                0x1B if context.protocol_later_eq(550) else \
@@ -156,10 +157,10 @@ class DisconnectPacket(Packet):
                0x1A if context.protocol_later_eq(107) else \
                0x40
 
-    packet_name = "disconnect"
+    packet_name = "disconnec play"
 
     definition = [
-        {'json_data': String}]
+        {'reason': String}]
 
 
 class SetCompressionPacket(Packet):
@@ -398,7 +399,8 @@ class EntityLookPacket(Packet):
 class ResourcePackSendPacket(Packet):
     @staticmethod
     def get_id(context):
-        return 0x3C if context.protocol_later_eq(PRE | 15) else \
+        return 0x40 if context.protocol_later_eq(763) else \
+               0x3C if context.protocol_later_eq(PRE | 15) else \
                0x39 if context.protocol_later_eq(PRE | 8) else \
                0x38 if context.protocol_later_eq(741) else \
                0x39 if context.protocol_later_eq(721) else \

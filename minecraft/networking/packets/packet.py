@@ -64,10 +64,13 @@ class Packet(object):
         return self
 
     def read(self, file_object):
+        print("Packet.read", f"package_name={self.packet_name}")
         for field in self.definition:  # pylint: disable=not-an-iterable
             for var_name, data_type in field.items():
+                print("-   Packet.read: ", var_name, data_type,)
                 value = data_type.read_with_context(file_object, self.context)
                 setattr(self, var_name, value)
+        
 
     # Writes a packet buffer to the socket with the appropriate headers
     # and compressing the data if necessary
